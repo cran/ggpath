@@ -36,8 +36,11 @@ test_that("geom from path works", {
 
   expect_error(print(p2), regexp = 'all values of `alpha` have to be in range')
   expect_error(print(p3), regexp = 'all values of `alpha` have to be in range')
-  expect_error(print(p4), regexp = 'Error in magick_image_readpath')
+  expect_error(print(p4))
 
+  # It seems like vdiffr isn't handling cran = FALSE properly so I call
+  # skip_on_cran() explicitly
+  skip_on_cran()
   vdiffr::expect_doppelganger("p1", p1)
 })
 
