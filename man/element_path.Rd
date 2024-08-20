@@ -2,7 +2,8 @@
 % Please edit documentation in R/theme_element.R
 \name{element_path}
 \alias{element_path}
-\title{Theme Element for Image Grobs}
+\alias{element_raster}
+\title{Theme Elements for Image Grobs}
 \usage{
 element_path(
   alpha = NULL,
@@ -12,6 +13,22 @@ element_path(
   color = NULL,
   angle = NULL,
   size = 0.5
+)
+
+element_raster(
+  image_path,
+  x = grid::unit(0.5, "npc"),
+  y = grid::unit(0.5, "npc"),
+  width = grid::unit(1, "npc"),
+  height = grid::unit(1, "npc"),
+  just = "centre",
+  hjust = NULL,
+  vjust = NULL,
+  interpolate = TRUE,
+  default.units = "npc",
+  name = NULL,
+  gp = NULL,
+  vp = NULL
 )
 }
 \arguments{
@@ -23,41 +40,107 @@ special character \code{"b/w"} to set it to black and white. For more informatio
 on valid color names in ggplot2 see
 \url{https://ggplot2.tidyverse.org/articles/ggplot2-specs.html?q=colour#colour-and-fill}.}
 
-\item{hjust, vjust}{The horizontal and vertical adjustment respectively.
-Must be a numerical value between 0 and 1.}
+\item{hjust}{A numeric vector specifying horizontal justification.
+    If specified, overrides the \code{just} setting.}
+
+\item{vjust}{A numeric vector specifying vertical justification.
+    If specified, overrides the \code{just} setting.}
 
 \item{angle}{The angle of the element as a numerical value between 0° and 360°.}
 
 \item{size}{The output grob size in \code{cm} (!).}
+
+\item{image_path}{A file path, url, raster object or bitmap array.
+See \code{\link[magick:editing]{magick::image_read()}} for further information.}
+
+\item{x}{A numeric vector or unit object specifying x-location.}
+
+\item{y}{A numeric vector or unit object specifying y-location.}
+
+\item{width}{A numeric vector or unit object specifying width.}
+
+\item{height}{A numeric vector or unit object specifying height.}
+
+\item{just}{The justification of the rectangle
+    relative to its (x, y) location.  If there are two values, the first
+    value specifies horizontal justification and the second value specifies
+    vertical justification.  Possible string values are: \code{"left"},
+    \code{"right"}, \code{"centre"}, \code{"center"}, \code{"bottom"},
+    and \code{"top"}.  For numeric values, 0 means left alignment
+    and 1 means right alignment.
+  }
+
+\item{interpolate}{
+    A logical value indicating whether to linearly interpolate the
+    image (the alternative is to use nearest-neighbour interpolation,
+    which gives a more blocky result).
+  }
+
+\item{default.units}{A string indicating the default units to use
+    if \code{x}, \code{y}, \code{width}, or \code{height}
+    are only given as numeric vectors.}
+
+\item{name}{ A character identifier. }
+
+\item{gp}{An object of class \code{"gpar"}, typically the output
+    from a call to the function \code{\link[grid]{gpar}}.  This is basically
+    a list of graphical parameter settings.}
+
+\item{vp}{A Grid viewport object (or NULL).}
 }
 \value{
 An S3 object of class \code{element}.
 }
 \description{
-In conjunction with the \link[ggplot2:theme]{ggplot2::theme} system, the function \code{element_path()}
-enables images in non-data components of the plot, e.g. axis text. It draws
-images from valid image URLs, raster objects, or bitmap arrays.
+In conjunction with the \code{\link[ggplot2:theme]{ggplot2::theme()}} system, the \code{element_} functions
+specify the display of how non-data components of a ggplot are drawn. Both
+functions call \code{\link[magick:editing]{magick::image_read()}} to process image files from valid image
+URLs, local paths, raster objects, or bitmap arrays.
+\itemize{
+\item \code{element_path()}: draws images as replacement for \code{\link[ggplot2:element]{ggplot2::element_text()}}.
+Use this to replace text with images.
+\item \code{element_raster()}: draws images as replacement for \code{\link[ggplot2:element]{ggplot2::element_rect()}}.
+Use this to put images in plot background.
+}
+}
+\details{
+To be able to use the functions correctly, a basic understanding of how they
+work is required.
+
+\strong{\code{element_path()}} can be applied wherever \code{\link[ggplot2:element]{ggplot2::element_text()}} is
+usually used. It replaces text with an image if the text is a valid image
+file location or data.
+
+\strong{\code{element_raster()}} can be applied wherever \code{\link[ggplot2:element]{ggplot2::element_rect()}} is
+usually used. A path in the sense of \code{\link[magick:editing]{magick::image_read()}} must be explicitly
+specified here because it cannot read plot data. It is designed exclusively
+for inserting an image into the background of a plot and calls
+\code{\link[grid:grid.raster]{grid::rasterGrob()}} internally.
+Neither \code{width} nor \code{height} need to be specified, in which case, the aspect
+ratio of the image is preserved. If both \code{width} and \code{height} are specified,
+it is likely that the image will be distorted.
 }
 \examples{
 library(ggplot2)
 library(ggpath)
 
-# compute path of an R logo file shipped with ggpath
-local_image_path <- system.file("r_logo.svg", package = "ggpath")
+# compute paths of R logo file and background image file shipped with ggpath
+local_r_logo <- system.file("r_logo.png", package = "ggpath")
+local_background_image <- system.file("example_bg.jpg", package = "ggpath")
 
 # create dataframe with x-y-coordinates and the above local path
-plot_data <- data.frame(x = c(-1, 1), y = 1, path = local_image_path)
+plot_data <- data.frame(x = c(-1, 1), y = 1, path = local_r_logo)
 
 # Replace title, subtitle, the caption, axis labels as well as y-axis text
 # the the local image
-ggplot(plot_data, aes(x = x, y = local_image_path)) +
+ggplot(plot_data, aes(x = x, y = local_r_logo)) +
   theme_minimal() +
   labs(
-    title = local_image_path,
-    subtitle = local_image_path,
-    x = local_image_path,
-    y = local_image_path,
-    caption = local_image_path
+    title = local_r_logo,
+    subtitle = local_r_logo,
+    x = local_r_logo,
+    y = local_r_logo,
+    caption = local_r_logo
   ) +
   theme(
     plot.caption = element_path(hjust = 1, size = 0.6),
@@ -67,7 +150,17 @@ ggplot(plot_data, aes(x = x, y = local_image_path)) +
     plot.title = element_path(hjust = 0, size = 2, alpha = 0.5),
     plot.subtitle = element_path(hjust = 0.9, angle = 45),
   )
+
+# Use local image as plot background
+ggplot(plot_data, aes(x = x, y = y)) +
+  geom_from_path(aes(path = path), width = 0.2) +
+  coord_cartesian(xlim = c(-2, 2)) +
+  theme_dark() +
+  theme(
+    plot.background = element_raster(local_background_image),
+    panel.background = element_rect(fill = "transparent")
+  )
 }
 \seealso{
-\code{\link[=geom_from_path]{geom_from_path()}} for more information.
+\code{\link[=geom_from_path]{geom_from_path()}}, \code{\link[grid:grid.raster]{grid::rasterGrob()}}, \code{\link[grid:unit]{grid::unit()}}, \code{\link[magick:editing]{magick::image_read()}}
 }

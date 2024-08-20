@@ -41,10 +41,33 @@ the plot data. The return value must be a \code{data.frame}, and
 will be used as the layer data. A \code{function} can be created
 from a \code{formula} (e.g. \code{~ head(.x, 10)}).}
 
-\item{...}{Other arguments passed on to \code{\link[ggplot2:layer]{layer()}}. These are
-often aesthetics, used to set an aesthetic to a fixed value, like
-\code{colour = "red"} or \code{size = 3}. They may also be parameters
-to the paired geom/stat.}
+\item{...}{Other arguments passed on to \code{\link[ggplot2:layer]{layer()}}'s \code{params} argument. These
+arguments broadly fall into one of 4 categories below. Notably, further
+arguments to the \code{position} argument, or aesthetics that are required
+can \emph{not} be passed through \code{...}. Unknown arguments that are not part
+of the 4 categories below are ignored.
+\itemize{
+\item Static aesthetics that are not mapped to a scale, but are at a fixed
+value and apply to the layer as a whole. For example, \code{colour = "red"}
+or \code{linewidth = 3}. The geom's documentation has an \strong{Aesthetics}
+section that lists the available options. The 'required' aesthetics
+cannot be passed on to the \code{params}. Please note that while passing
+unmapped aesthetics as vectors is technically possible, the order and
+required length is not guaranteed to be parallel to the input data.
+\item When constructing a layer using
+a \verb{stat_*()} function, the \code{...} argument can be used to pass on
+parameters to the \code{geom} part of the layer. An example of this is
+\code{stat_density(geom = "area", outline.type = "both")}. The geom's
+documentation lists which parameters it can accept.
+\item Inversely, when constructing a layer using a
+\verb{geom_*()} function, the \code{...} argument can be used to pass on parameters
+to the \code{stat} part of the layer. An example of this is
+\code{geom_area(stat = "density", adjust = 0.5)}. The stat's documentation
+lists which parameters it can accept.
+\item The \code{key_glyph} argument of \code{\link[ggplot2:layer]{layer()}} may also be passed on through
+\code{...}. This can be one of the functions described as
+\link[ggplot2:draw_key]{key glyphs}, to change the display of the layer in the legend.
+}}
 
 \item{na.rm}{If \code{FALSE}, the default, missing values are removed with
 a warning. If \code{TRUE}, missing values are silently removed.}
@@ -72,15 +95,15 @@ to compute their \code{median} or \code{mean} and draw them as a line.
 \section{Aesthetics}{
 
 \code{geom_median_lines()} and \code{geom_mean_lines()} understand the following
-aesthetics (at least one of the bold aesthetics is required):
-\itemize{
-\item{\strong{x0}}{ - The variable for which to compute the median/mean that is drawn as vertical line.}
-\item{\strong{y0}}{ - The variable for which to compute the median/mean that is drawn as horizontal line.}
-\item{\code{alpha = NA}}{ - The alpha channel, i.e. transparency level, as a numerical value between 0 and 1.}
-\item{\code{color = "red"}}{ - The color of the drawn lines.}
-\item{\code{linetype = 2}}{ - The linetype of the drawn lines.}
-\item{\code{size = 0.5}}{ - The size of the drawn lines. Deprecated as of ggplot2 v3.4.0, use \code{linewidth} instead.}
-\item{\code{linewidth = 0.5}}{ - The width of the drawn lines. Starting at ggplot2 v3.4.0.}
+aesthetics (at least one of the \code{x0} or \code{y0} aesthetics is required):
+\describe{
+\item{\code{x0}}{The variable for which to compute the median/mean that is drawn as vertical line.}
+\item{\code{y0}}{The variable for which to compute the median/mean that is drawn as horizontal line.}
+\item{\code{alpha = NA}}{The alpha channel, i.e. transparency level, as a numerical value between 0 and 1.}
+\item{\code{color = "red"}}{The color of the drawn lines.}
+\item{\code{linetype = 2}}{The linetype of the drawn lines.}
+\item{\code{size = 0.5}}{The size of the drawn lines. Deprecated as of ggplot2 v3.4.0, use \code{linewidth} instead.}
+\item{\code{linewidth = 0.5}}{The width of the drawn lines. Starting at ggplot2 v3.4.0.}
 }
 }
 
@@ -116,5 +139,5 @@ ggplot(mtcars, aes(x = disp, y = mpg)) +
   theme_minimal()
 }
 \seealso{
-The underlying ggplot2 geoms \code{\link[=geom_hline]{geom_hline()}} and \code{\link[=geom_vline]{geom_vline()}}
+The underlying ggplot2 geoms \code{\link[ggplot2:geom_abline]{ggplot2::geom_hline()}} and \code{\link[ggplot2:geom_abline]{ggplot2::geom_vline()}}
 }

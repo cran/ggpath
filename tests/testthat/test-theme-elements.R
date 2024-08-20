@@ -24,7 +24,7 @@ test_that("logo element works", {
       axis.title.x = element_path(),
       axis.title.y = element_path(vjust = 0.9),
       plot.title = element_path(hjust = 0, size = 2, alpha = 0.5),
-      plot.subtitle = element_path(hjust = 0.9, angle = 45),
+      plot.subtitle = element_path(hjust = 0.9, angle = 45)
     )
 
   # It seems like vdiffr isn't handling cran = FALSE properly so I call
@@ -65,11 +65,54 @@ test_that("logo element works with 'b/w'", {
       # apply color again but now with colour for 100% test coverage
       axis.title.y = element_path(vjust = 0.9, colour = "b/w"),
       plot.title = element_path(hjust = 0, size = 2, alpha = 0.5),
-      plot.subtitle = element_path(hjust = 0.9, angle = 45),
+      plot.subtitle = element_path(hjust = 0.9, angle = 45)
     )
 
   # It seems like vdiffr isn't handling cran = FALSE properly so I call
   # skip_on_cran() explicitly
   skip_on_cran()
   vdiffr::expect_doppelganger("p2", p2)
+})
+
+test_that("background element works", {
+  # we skip mac here because the reference file is created on windows and
+  # comparison breaks on Mac.
+  # Please don't ask me why I create this reference file on windows compared
+  # to the mac reference above lol
+  skip_on_os("mac")
+  library(ggplot2)
+
+  # compute path of a background image file shipped with ggpath
+  local_background_image <- system.file("example_bg.jpg", package = "ggpath")
+
+  # create dataframe with x-y-coordinates and the above local path
+  plot_data <- data.frame(x = c(-1, 1), y = 1)
+
+  # Replace title, subtitle, the caption, axis labels as well as y-axis text
+  # with the local image
+  p3 <- ggplot(plot_data, aes(x = x, y = y)) +
+    geom_point() +
+    coord_cartesian(xlim = c(-2, 2)) +
+    theme_dark() +
+    theme(
+      plot.background = element_raster(local_background_image),
+      panel.background = element_rect(fill = "transparent")
+    )
+
+  # Do above but intentionally break the path
+  p4 <- ggplot(plot_data, aes(x = x, y = y)) +
+    geom_point() +
+    coord_cartesian(xlim = c(-2, 2)) +
+    theme_dark() +
+    theme(
+      plot.background = element_raster(paste0(local_background_image, "_broken_path")),
+      panel.background = element_rect(fill = "transparent")
+    )
+
+  expect_warning(print(p4), "ggpath failed to read an image from")
+
+  # It seems like vdiffr isn't handling cran = FALSE properly so I call
+  # skip_on_cran() explicitly
+  skip_on_cran()
+  vdiffr::expect_doppelganger("p3", p3)
 })

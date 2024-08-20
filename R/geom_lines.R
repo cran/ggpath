@@ -11,17 +11,17 @@
 #'   the default plot specification.
 #' @section Aesthetics:
 #' `geom_median_lines()` and `geom_mean_lines()` understand the following
-#' aesthetics (at least one of the bold aesthetics is required):
-#' \itemize{
-#'   \item{**x0**}{ - The variable for which to compute the median/mean that is drawn as vertical line.}
-#'   \item{**y0**}{ - The variable for which to compute the median/mean that is drawn as horizontal line.}
-#'   \item{`alpha = NA`}{ - The alpha channel, i.e. transparency level, as a numerical value between 0 and 1.}
-#'   \item{`color = "red"`}{ - The color of the drawn lines.}
-#'   \item{`linetype = 2`}{ - The linetype of the drawn lines.}
-#'   \item{`size = 0.5`}{ - The size of the drawn lines. Deprecated as of ggplot2 v3.4.0, use `linewidth` instead.}
-#'   \item{`linewidth = 0.5`}{ - The width of the drawn lines. Starting at ggplot2 v3.4.0.}
+#' aesthetics (at least one of the `x0` or `y0` aesthetics is required):
+#' \describe{
+#'   \item{`x0`}{The variable for which to compute the median/mean that is drawn as vertical line.}
+#'   \item{`y0`}{The variable for which to compute the median/mean that is drawn as horizontal line.}
+#'   \item{`alpha = NA`}{The alpha channel, i.e. transparency level, as a numerical value between 0 and 1.}
+#'   \item{`color = "red"`}{The color of the drawn lines.}
+#'   \item{`linetype = 2`}{The linetype of the drawn lines.}
+#'   \item{`size = 0.5`}{The size of the drawn lines. Deprecated as of ggplot2 v3.4.0, use `linewidth` instead.}
+#'   \item{`linewidth = 0.5`}{The width of the drawn lines. Starting at ggplot2 v3.4.0.}
 #' }
-#' @seealso The underlying ggplot2 geoms [`geom_hline()`] and [`geom_vline()`]
+#' @seealso The underlying ggplot2 geoms [ggplot2::geom_hline()] and [ggplot2::geom_vline()]
 #' @name geom_lines
 #' @return A ggplot2 layer ([ggplot2::layer()]) that can be added to a plot
 #'   created with [ggplot2::ggplot()].
