@@ -11,7 +11,7 @@ status](https://www.r-pkg.org/badges/version/ggpath)](https://CRAN.R-project.org
 downloads](https://cranlogs.r-pkg.org/badges/grand-total/ggpath)](https://CRAN.R-project.org/package=ggpath)
 [![Dev
 status](https://img.shields.io/github/r-package/v/mrcaseb/ggpath/main?label=dev%20version&style=flat-square&logo=github)](https://mrcaseb.github.io/ggpath/)
-[![R-CMD-check](https://github.com/mrcaseb/ggpath/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mrcaseb/ggpath/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://img.shields.io/github/actions/workflow/status/mrcaseb/ggpath/R-CMD-check.yaml?label=R%20check&style=flat-square&logo=github)](https://github.com/mrcaseb/ggpath/actions/workflows/R-CMD-check.yaml)
 [![Lifecycle:
 stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
 [![Codecov test
@@ -53,7 +53,7 @@ The below examples use local image files that are shipped with the
 package. Let’s locate the images first.
 
 ``` r
-local_r_logo <- system.file("r_logo.png", package = "ggpath")
+r_logo <- "https://cran.r-project.org/Rlogo.svg"
 local_background_image <- system.file("example_bg.jpg", package = "ggpath")
 ```
 
@@ -65,7 +65,7 @@ by replacing the local path with the actual image.
 ``` r
 library(ggplot2)
 library(ggpath)
-plot_data <- data.frame(x = c(-1, 1), y = 1, path = local_r_logo)
+plot_data <- data.frame(x = c(-1, 1), y = 1, path = r_logo)
 ggplot(plot_data, aes(x = x, y = y)) +
   geom_from_path(aes(path = path), width = 0.2) +
   coord_cartesian(xlim = c(-2, 2)) +
@@ -83,24 +83,24 @@ with the `hjust`/`vjust` arguments, or the rotation with the `angle`
 argument.
 
 ``` r
-ggplot(plot_data, aes(x = x, y = local_r_logo)) +
+ggplot(plot_data, aes(x = x, y = r_logo)) +
   geom_from_path(aes(path = path), width = 0.2, alpha = 0.2) +
   coord_cartesian(xlim = c(-2, 2)) +
   theme_minimal() +
   labs(
-    title = local_r_logo,
-    subtitle = local_r_logo,
-    x = local_r_logo,
-    y = local_r_logo,
-    caption = local_r_logo
+    title = r_logo,
+    subtitle = r_logo,
+    x = r_logo,
+    y = r_logo,
+    caption = r_logo
   ) +
   theme(
-    plot.caption = element_path(hjust = 1, size = 0.6),
-    axis.text.y = element_path(size = 1),
+    plot.caption = element_path(hjust = 1, size = grid::unit(4, "lines")),
+    axis.text.y.left = element_path(size = 1, alpha = 0.4),
     axis.title.x = element_path(),
     axis.title.y = element_path(vjust = 0.9),
     plot.title = element_path(hjust = 0, size = 2, alpha = 0.5),
-    plot.subtitle = element_path(hjust = 0.9, angle = 45),
+    plot.subtitle = element_path(hjust = 0.9, angle = 45)
   )
 ```
 
@@ -123,7 +123,7 @@ ggplot(plot_data, aes(x = x, y = 1)) +
     x = "x axis label",
     y = "y axis label",
     caption = "useful caption",
-    tag = local_r_logo
+    tag = r_logo
   ) +
   theme(
     plot.tag = element_path(size = 2, vjust = 1, alpha = 0.7),
@@ -143,10 +143,7 @@ The second theme element, `element_raster()`, allows rendering of images
 in the plot background. It is a replacement for
 `ggplot2::element_rect()`. In the following example, we plot the two
 logos again and now set a sample background. The sample background is a
-photo by [Dan Cristian
-Pădureț](https://unsplash.com/@dancristianpaduret?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash)
-on
-[Unsplash](https://unsplash.com/photos/white-printer-paper-on-brown-textile-izq7BRX6xfw?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash).
+photo by Dan Cristian Pădureț on Unsplash.
 
 ``` r
 ggplot(plot_data, aes(x = x, y = y)) +
@@ -154,7 +151,7 @@ ggplot(plot_data, aes(x = x, y = y)) +
   coord_cartesian(xlim = c(-2, 2)) +
   theme_dark() +
   theme(
-    plot.background = element_raster(local_background_image),
+    plot.background = element_raster(image_path = local_background_image),
     panel.background = element_rect(fill = "transparent")
   )
 ```

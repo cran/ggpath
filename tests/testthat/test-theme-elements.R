@@ -1,4 +1,4 @@
-test_that("logo element works", {
+test_that("theme element works", {
   library(ggplot2)
 
   # compute path of an R logo file shipped with ggpath
@@ -20,7 +20,7 @@ test_that("logo element works", {
     ) +
     theme(
       plot.caption = element_path(hjust = 1, size = 0.6),
-      axis.text.y = element_path(size = 1),
+      axis.text.y.left = element_path(size = 1),
       axis.title.x = element_path(),
       axis.title.y = element_path(vjust = 0.9),
       plot.title = element_path(hjust = 0, size = 2, alpha = 0.5),
@@ -33,12 +33,7 @@ test_that("logo element works", {
   vdiffr::expect_doppelganger("p1", p1)
 })
 
-test_that("logo element works with 'b/w'", {
-  # we test mac only here and add the color = "b/w" argument
-  # because the reference file is created on a mac and comparison breaks
-  # on other operating systems because of slightly different grey tones.
-  skip_on_os(c("windows", "linux", "solaris"))
-
+test_that("theme element works with 'b/w'", {
   library(ggplot2)
 
   # compute path of an R logo file shipped with ggpath
@@ -60,7 +55,7 @@ test_that("logo element works with 'b/w'", {
     ) +
     theme(
       plot.caption = element_path(hjust = 1, size = 0.6),
-      axis.text.y = element_path(size = 1, color = "b/w"),
+      axis.text.y.left = element_path(size = 1, color = "b/w"),
       axis.title.x = element_path(),
       # apply color again but now with colour for 100% test coverage
       axis.title.y = element_path(vjust = 0.9, colour = "b/w"),
@@ -71,15 +66,22 @@ test_that("logo element works with 'b/w'", {
   # It seems like vdiffr isn't handling cran = FALSE properly so I call
   # skip_on_cran() explicitly
   skip_on_cran()
+
+  # we test mac only here and add the color = "b/w" argument
+  # because the reference file is created on a mac and comparison breaks
+  # on other operating systems because of slightly different grey tones.
+  # for code coverage we build the plot without printing it
+  out <- ggplot2::ggplot_build(p2) |>
+    ggplot2::ggplot_gtable()
+  # announcing the snapshot file prevents testthat from deleting the file
+  # if the test is skipped
+  announce_snapshot_file(name = "p2.svg")
+  skip_on_os(c("windows", "linux", "solaris"))
+
   vdiffr::expect_doppelganger("p2", p2)
 })
 
 test_that("background element works", {
-  # we skip mac here because the reference file is created on windows and
-  # comparison breaks on Mac.
-  # Please don't ask me why I create this reference file on windows compared
-  # to the mac reference above lol
-  skip_on_os("mac")
   library(ggplot2)
 
   # compute path of a background image file shipped with ggpath
@@ -95,7 +97,7 @@ test_that("background element works", {
     coord_cartesian(xlim = c(-2, 2)) +
     theme_dark() +
     theme(
-      plot.background = element_raster(local_background_image),
+      plot.background = element_raster(image_path = local_background_image),
       panel.background = element_rect(fill = "transparent")
     )
 
@@ -105,7 +107,7 @@ test_that("background element works", {
     coord_cartesian(xlim = c(-2, 2)) +
     theme_dark() +
     theme(
-      plot.background = element_raster(paste0(local_background_image, "_broken_path")),
+      plot.background = element_raster(image_path = paste0(local_background_image, "_broken_path")),
       panel.background = element_rect(fill = "transparent")
     )
 
@@ -114,5 +116,13 @@ test_that("background element works", {
   # It seems like vdiffr isn't handling cran = FALSE properly so I call
   # skip_on_cran() explicitly
   skip_on_cran()
+  # we skip mac here because the reference file is created on windows and
+  # comparison breaks on Mac.
+  # Please don't ask me why I create this reference file on windows compared
+  # to the mac reference above lol
+  # announcing the snapshot file prevents testthat from deleting the file
+  # if the test is skipped
+  announce_snapshot_file(name = "p3.svg")
+  skip_on_os("mac")
   vdiffr::expect_doppelganger("p3", p3)
 })
